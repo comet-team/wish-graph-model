@@ -1,13 +1,6 @@
 import asyncio
-
 import requests
-from quart import Quart
-
-from request_preprocessing.parser import Parser
-
-global app
-app = Quart(__name__)
-
+from request_preprocessing.parser import parser
 
 def parse_nft_items(owner, answer):
     nft_number = answer['total']
@@ -33,9 +26,12 @@ async def get_nft_by_owner(token):
     loop = asyncio.get_event_loop()
     get_request = loop.run_in_executor(None, requests.get, 'https://api.rarible.com/protocol/v0.1/ethereum/nft/items/byOwner', {"owner": token})
     answer = await get_request
-    print(f"Get response successful")
-    parser = Parser(token)
-    print(parser.parse_user_nft(token, answer.json()))
+    try:
+        answer = parser.parse_user_nft(token, answer.json())
+        #print(f"Get response successful")
+    except:
+        print(f"Got bad response")
+        answer = []
     return answer
 
 
@@ -43,27 +39,10 @@ async def get_nft_by_creator(token):
     loop = asyncio.get_event_loop()
     get_request = loop.run_in_executor(None, requests.get, 'https://api.rarible.com/protocol/v0.1/ethereum/nft/items/byCreator', {"creator": token})
     answer = await get_request
-    print(f"Get response successful")
-    parser = Parser(token)
-    print(parser.parse_creator_purchasers(token, answer.json()))
+    try:
+        answer = parser.parse_creator_purchasers(token, answer.json())
+        #print(f"Get response successful")
+    except:
+        print(f"Got bad response")
+        answer = []
     return answer
-
-
-@app.route('/user_recommend/<user_token>', methods=['GET'])
-async def get_recommendations(user_token):
-    print(f"received request for profile of user {user_token}")
-    answer = await get_nft_by_owner(user_token)
-    print(f"sending request for profile of user {user_token}")
-    return "WHAT???"
-
-
-@app.route('/creator_recommend/<user_token>', methods=['GET'])
-async def get_ideas(user_token):
-    print(f"received request for profile of user {user_token}")
-    answer = await get_nft_by_creator(user_token)
-    print(f"sending request for profile of user {user_token}")
-    return "WHAT???"
-
-if __name__ == "__main__":
-    port = '8081'
-    app.run(port=port, host='0.0.0.0', debug=True, use_reloader=False)

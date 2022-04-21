@@ -5,9 +5,6 @@ class Parser:
     MAX_CREATORS = 30
     MAX_PURCHASERS = 30
 
-    def __init__(self, owner):
-        self.owner = owner
-
     def parse_user_nft(self, owner, answer):
         nft_number = answer['total']
         loved_creators = {}
@@ -54,14 +51,5 @@ class Parser:
             purchasers = purchasers.keys()
         return purchasers
 
-    def get_level_tree(self, owner, answer, levels=6):
-        self.checked_users = set()
-        self.creators_checked = set()
-
-        waiting_owners_list = {owner}
-        waiting_authors_list = set()
-
-        self.ownership_df = pd.DataFrame([], columns=['user_id', 'creator_id', 'number_owned', 'total_value', 'level'])
-        for level in range(levels):
-            for user in waiting_owners_list:
-                user_ownership = self.parse_user_nft(self, owner, answer)
+global parser
+parser = Parser()
