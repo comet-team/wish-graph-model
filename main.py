@@ -1,4 +1,4 @@
-import pandas as pd
-
-a = pd.DataFrame({'a':[1,2,2,3], 'b' : [55, 66, 4, 77]})
-print(pd.unique(a['a']))
+"""
+Unfortunately due to Flask/Quart magic i couldn't normally run app from main
+(using global variable didn't help, i somehow killed one port i was working on)
+"""
