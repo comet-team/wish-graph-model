@@ -1,5 +1,4 @@
 import pandas as pd
-import asyncio
 
 from server.request_handler import get_nft_by_creator
 from server.request_handler import get_nft_by_owner
@@ -16,7 +15,7 @@ class ModelControl:
         MAX_LEN_CREATOR_LIST = 20
         waiting_owners_list = {owner}
 
-        ownership_df = pd.DataFrame({'user_id':[], 'creator_id':[], 'number_owned':[], 'total_value':[], 'level' : []})
+        ownership_df = pd.DataFrame({'user_id': [], 'creator_id': [], 'number_owned': [], 'total_value': [], 'level': []})
         print(ownership_df)
         for level in range(levels):
             print(f"level : {level}, number waiting {len(waiting_owners_list)}")
@@ -24,7 +23,7 @@ class ModelControl:
             for user in waiting_owners_list:
                 user_ownership = await get_nft_by_owner(user)
                 user_ownership['level'] = [level] * user_ownership.shape[0]
-                ownership_df = pd.concat([ownership_df, user_ownership], ignore_index = True)
+                ownership_df = pd.concat([ownership_df, user_ownership], ignore_index=True)
                 next_waiting_creator_list.update(set(ownership_df['creator_id']))
                 if len(next_waiting_creator_list) > MAX_LEN_CREATOR_LIST:
                     break
@@ -41,6 +40,10 @@ class ModelControl:
             checked_users.update(waiting_owners_list)
 
         return ownership_df
+
+    async def get_owner_recommendations(self, owner):
+        friend_tree = await self.get_level_tree(owner)
+        return pd.unique(friend_tree['creator_id'])
 
 
 global recommendation_model

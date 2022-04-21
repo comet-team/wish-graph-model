@@ -14,10 +14,9 @@ app = Quart(__name__)
 async def get_recommendations(user_token):
     print(f"received request for profile of user {user_token}")
     # answer = await get_nft_by_owner(user_token)
-    answer = await recommendation_model.get_level_tree(user_token)
+    answer = await recommendation_model.get_owner_recommendations(user_token)
     print(f"sending request for profile of user {user_token}")
-    print(answer)
-    return answer.to_json()
+    return jsonify(list(answer))
 
 
 @app.route('/creator_recommend/<user_token>', methods=['GET'])
