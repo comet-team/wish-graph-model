@@ -16,7 +16,6 @@ class ModelControl:
         waiting_owners_list = {owner}
 
         ownership_df = pd.DataFrame({'user_id': [], 'creator_id': [], 'number_owned': [], 'total_value': [], 'level': []})
-        print(ownership_df)
         for level in range(levels):
             print(f"level : {level}, number waiting {len(waiting_owners_list)}")
             next_waiting_creator_list = set()
@@ -43,7 +42,15 @@ class ModelControl:
 
     async def get_owner_recommendations(self, owner):
         friend_tree = await self.get_level_tree(owner)
-        return pd.unique(friend_tree['creator_id'])
+        friend_tree['number_owned'] = (friend_tree['number_owned']-friend_tree['number_owned'].min()+1)/friend_tree['number_owned'].std()
+        friend_tree['total_value'] = (friend_tree['total_value'] - friend_tree['total_value'].min()+1)/ friend_tree['total_value'].std()
+        friend_tree['value'] = friend_tree['total_value']*friend_tree['number_owned']/(1+friend_tree['level'])
+        friend_tree = friend_tree.drop(columns = ['number_owned', 'total_value', 'level'])
+        friend_tree = friend_tree.groupby('creator_id').sum()
+        friend_tree['value'] = (friend_tree['value'] - friend_tree['value'].min())/friend_tree['value'].std()
+        friend_tree.sort_values(by='value',inplace = True)
+        print(friend_tree.head())
+        return friend_tree
 
 
 global recommendation_model
