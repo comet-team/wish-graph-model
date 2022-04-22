@@ -15,8 +15,9 @@ async def get_recommendations(user_token):
     print(f"received request for profile of user {user_token}")
     # answer = await get_nft_by_owner(user_token)
     answer = await recommendation_model.get_owner_recommendations(user_token)
-    print(f"sending request for profile of user {user_token}")
-    return answer.to_json()
+    print(f"sending request for profile of user {user_token}, number tokens: {answer.shape[0]}")
+    answer['creator_id'] = answer.index
+    return jsonify(answer.to_numpy().tolist())
 
 
 @app.route('/creator_recommend/<user_token>', methods=['GET'])
