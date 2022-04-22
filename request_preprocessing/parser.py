@@ -51,5 +51,26 @@ class Parser:
             purchasers = purchasers.keys()
         return purchasers
 
+    def parse_nft(self, nft):
+        try:
+            #print('id', nft['id'])
+            #print('meta', nft['meta']['content'][0]['url'])
+            return {'id' : nft['id'], 'url' : nft['meta']['content'][0]['url']}
+        except:
+            return {}
+
+    def parse_creator_nft_on_sale(self, creator, creator_wallet):
+        nft_number = creator_wallet['total']
+        available_nfts = []
+        for i in range(min(nft_number, 10)):
+            try:
+                if not creator_wallet['items'][i]['deleted'] and \
+                        int(creator_wallet['items'][i]['supply']) > 0:
+                    available_nfts.append(creator_wallet['items'][i]['id']) #= creator_wallet['items'][i]['lastUpdatedAt']
+            except:
+                continue
+        return available_nfts
+
+
 global parser
 parser = Parser()
