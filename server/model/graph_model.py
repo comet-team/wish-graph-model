@@ -1,7 +1,7 @@
 import pandas as pd
 
-from server.request_handler import get_nft_by_creator
-from server.request_handler import get_nft_by_owner
+from request_handler import get_nft_by_creator
+from request_handler import get_nft_by_owner
 
 
 class ModelControl:
