@@ -1,4 +1,4 @@
-from quart import Quart, jsonify
+from quart import Quart, jsonify, request
 
 from model.graph_model import recommendation_model
 from request_handler import *
@@ -10,11 +10,21 @@ global recommendation_model
 app = Quart(__name__)
 
 
-@app.route('/user_recommend/<user_token>', methods=['GET'])
-async def get_recommendations(user_token):
+@app.route('/user_recommend', methods=['GET'])
+async def get_recommendations():
+    user_token = request.form.get('user')
+    user_data = request.form.get('data')
+    try:
+        max_recommendations = request.form.get('max_recommendation_number')
+    except:
+        max_recommendations = 30
+    try:
+        min_recommendations = request.form.get('min_recommendation_number')
+    except:
+        min_recommendations = 0
     print(f"received request for profile of user {user_token}")
-    # answer = await get_nft_by_owner(user_token)
-    answer = await recommendation_model.get_owner_recommendations(user_token)
+    user_data = parser.parse_user_data(owner = user_token, user_data=user_data);
+    answer = recommendation_model.get_owner_recommendations(user_token, user_data)
     print(f"sending request for profile of user {user_token}, number tokens: {len(answer)}")
     return jsonify(answer)
 
