@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial.distance import squareform, pdist
 
 class ModelControl:
-    def get_owner_recommendations(self, owner, connection_df):
+    def get_owner_recommendations(self, owner, connection_df, min_number, max_number):
         connection_df['total_value'] = (connection_df['total_value'] - connection_df['total_value'].min()) / connection_df['total_value'].std()
         connection_df = connection_df.pivot(index='user_id', columns='creator_id', values=['total_value'])
         connection_df = connection_df.fillna(value=0)
@@ -18,7 +18,7 @@ class ModelControl:
         recommendation_weights = pd.DataFrame({'creator_id': connection_df.columns.get_level_values('creator_id'), 'rate': np.matmul(table, connection_df.loc[:, "total_value"])})
 
         recommendation_weights.sort_values(by = 'rate', ignore_index=True, inplace=True)
-        return recommendation_weights['creator_id']
+        return recommendation_weights['creator_id'][:max_number]
 
 global recommendation_model
 recommendation_model = ModelControl()

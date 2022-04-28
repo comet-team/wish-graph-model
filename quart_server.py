@@ -24,7 +24,7 @@ async def get_recommendations():
         min_recommendations = 0
     print(f"received request for profile of user {user_token}")
     user_data = parser.parse_user_data(owner = user_token, user_data=user_data);
-    answer = recommendation_model.get_owner_recommendations(user_token, user_data)
+    answer = recommendation_model.get_owner_recommendations(user_token, user_data, min_recommendations, max_recommendations)
     print(f"sending request for profile of user {user_token}, number tokens: {len(answer)}")
     return jsonify(answer)
 

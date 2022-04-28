@@ -1,7 +1,7 @@
 # wish-graph-model
 Local server which is responsible for making decisions based on ready graph sent in request in json format from main server. 
 Right now a primitive analogy of Collaborative Filtering exists. In the future the normal (embedding-idea) model is going to be created and tested. 
-1. install quart, pandas, numpy, also maybe asyncio if it's not included in common libraries
+1. install quart, pandas, numpy, scipy, also maybe asyncio if it's not included in common libraries
 2. run quart_server.py
 3. right now only get request like "http://localhost:8081/user_recommend" is handled 
 4. the request must have a form like 
